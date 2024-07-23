@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Reader</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+        integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+        crossorigin="anonymous"></script>
+    <script>
+        let logs = "Loading...";
+        fetch(`http://localhost:8000/file`).then(async function (response) {
+            const resp = await response.json();
+            logs = resp.file;
+            document.getElementById('logs').innerText = logs;
+        });
+    </script>
+    <script>
+        const socketIo = io('http://localhost:8000');
+        socketIo.on('connect', () => {
+            console.log("🚀 ~ socketIo.on ~ socketIo:", socketIo)
+        })
+        socketIo.on('updates', (updates) => {
+            logs = logs + updates;
+            document.getElementById('logs').innerText = logs;
+            console.log("🚀 ~ socketIo.on ~ updates:", updates)
+        })
+    </script>
+</head>
+
+<body>
+    <p id="logs">
+        Loading...
+    </p>
+</body>
+
+</html>
